@@ -1,25 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import ChartComponent from './components/ChartComponent';
+import CoinSelector from './components/CoinSelector';
 
-function App() {
+const App = () => {
+  const [selectedCoin, setSelectedCoin] = useState('ethusdt');
+  const [interval, setInterval] = useState('1m');
+  const [coinData, setCoinData] = useState({});
+
+  useEffect(() => {
+    // Retrieve data from localStorage when switching coins
+    const savedData = localStorage.getItem(selectedCoin);
+    if (savedData) {
+      setCoinData(JSON.parse(savedData));
+    } else {
+      setCoinData({});
+    }
+  }, [selectedCoin]);
+
+  const handleCoinChange = (newCoin) => {
+    setSelectedCoin(newCoin);
+  };
+
+  const handleIntervalChange = (newInterval) => {
+    setInterval(newInterval);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Binance Market Data</h1>
+      <CoinSelector
+        selectedCoin={selectedCoin}
+        onCoinChange={handleCoinChange}
+        interval={interval}
+        onIntervalChange={handleIntervalChange}
+      />
+      <ChartComponent
+        selectedCoin={selectedCoin}
+        interval={interval}
+        coinData={coinData}
+        setCoinData={setCoinData}
+      />
     </div>
   );
-}
+};
 
 export default App;
